@@ -27,7 +27,7 @@ the following two days were insane.
 ## 23/11/2024: 
   - Did not work on the project.
 
-## 24/11/2024 :
+## 24/11/2024:
   - Finally i manged to remove the redundant faces from inside the World, i was all the time look for the wrong thing, the algorithm that they described is correct but it wasn't working for me. i tried to change and tried another things, but the problem wa actually how Godot engine handle the scenes ... it not like Unity, so I had to do this to make it work: when generating the world in world.cs i must only create *all the CHUNKS* and then generate mesh on them because when the algortihm was trying to figure out if this face of the current chunk need to visible or not, the chunk that is trying locate is not yet build. So, that was the probelm it is fixed now.
   - you can [Watch the video](https://drive.google.com/file/d/13EVmF7_wwM1A_7VxCsVTVv4LWW49fPCF/view?usp=sharing)
   - 4 hours.
