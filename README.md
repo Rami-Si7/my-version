@@ -12,4 +12,4 @@ Date - 21/11/2024:
 - i worked on it for more than 7 hours, this include watching lectures, tutorials and having fun in the editor.
 Date - 22/11/2024:
 - I spent all day on the project. i solved the recent error and contunied progressing, my goal was to apply greedy meshing for all chunks in the world, i succeeded only for not rendering invisible faces in the chunk it self but not the boundry faces (the ones between each chunk)
-- i tried many thing but i did not progress mush here is how it looked [Watch the video](media/your_video.mp4) 
+- i tried many thing but i did not progress mush here is how it looked [Watch the video](https://drive.google.com/file/d/1U0LGco8grP730v5HRNAZUZpkt0MRTjNm/view?usp=sharing) 
