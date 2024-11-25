@@ -1,14 +1,14 @@
 # Road to Glory (Greedy Mesh Generation) BLOG:
 ## Table of Contents:
-- [20/11/2024](#20/11/2024)
-- [21/11/2024](#21/11/2024)
-- [22/11/2024](#22/11/2024)
-- [23/11/2024](#23/11/2024)
-- [24/11/2024](#24/11/2024)
+- [20/11/2024](#20112024)
+- [21/11/2024](#21112024)
+- [22/11/2024](#22112024)
+- [23/11/2024](#23112024)
+- [24/11/2024](#24112024)
 
-## 20/11/2024 :
+## 20/11/2024:
 - after our first meeting when you asked from me to read Building a High-Performance Voxel Engine in Unity artical and try to implement it.
-- at first not all was making sense to me so at fiirst i tried copy paste and see what happen, most of the time i got to many errors because someting does not match in Godot aas in Unity. so i had to look to watch many tutorials to make the basics work.
+- at first not all was making sense to me so at first i tried copy paste and see what happen, most of the time i got to many errors because someting does not match in Godot aas in Unity. so i had to look to watch many tutorials to make the basics work.
 - at first day i did not really progresses although is spent so much time learning things probably most of the day. (5 hours) i think that i have spent more but it is okey.
   
 the following two days were insane.
