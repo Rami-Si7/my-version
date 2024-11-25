@@ -1,4 +1,6 @@
 # Road to Glory (Greedy Mesh Generation) BLOG:
+## Table of Contents:
+- [Date - 20/11/2024](#Date - 20/11/2024)
 
 ## Date - 20/11/2024:
 - after our first meeting when you asked from me to read Building a High-Performance Voxel Engine in Unity artical and try to implement it.
