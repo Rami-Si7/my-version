@@ -14,3 +14,10 @@ Date - 21/11/2024:
 Date - 22/11/2024:
 - I spent all day on the project. i solved the recent error and contunied progressing, my goal was to apply greedy meshing for all chunks in the world, i succeeded only for not rendering invisible faces in the chunk it self but not the boundry faces (the ones between each chunk)
 - i tried many thing but i did not progress mush here is how it looked [Watch the video](https://drive.google.com/file/d/1U0LGco8grP730v5HRNAZUZpkt0MRTjNm/view?usp=sharing) 
+
+Date -23/11/2024: 
+  - Did not work on the project.
+
+Date - 24/11/2024:
+  - Finally i manged to remove the redundant faces from inside the World, i was all the time look for the wrong thing, the algorithm that they described is correct but it wasn't working for me. i tried to change and tried another things, but the problem wa actually how Godot engine handle the scenes ... it not like Unity, so I had to do this to make it work: when generating the world in world.cs i must only create *all the CHUNKS* and then generate mesh on them because when the algortihm was trying to figure out if this face of the current chunk need to visible or not, the chunk that is trying locate is not yet build. So, that was the probelm it is fixed now.
+  - you can [Watch the video](https://drive.google.com/file/d/13EVmF7_wwM1A_7VxCsVTVv4LWW49fPCF/view?usp=sharing) 
