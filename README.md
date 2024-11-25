@@ -1,5 +1,5 @@
 # Road to Glory (Greedy Mesh Generation) BLOG:
-## Table of Contents:
+## Dates:
 - [20/11/2024](#20112024)
 - [21/11/2024](#21112024)
 - [22/11/2024](#22112024)
