@@ -35,21 +35,17 @@ the following two days were insane.
 ## 25/11/2024:
   - To make our world look like terrain, we want to use Perlin Noise, but at first we want to do something easier and understand things. We generated noise using Sin function given frequency and amplitude.
   - To choose what is the voxel Type is if Air or Stone I did this:
-    - surfaceY = &lambda;
-    - $xOffset =  Sin(x * frequency) * amplitude$
-    - $zOffset =  Sin(z * frequency) * amplitude$
-    - return Stone if $current_voxel.positonY < surfaceY + xOffset + zOffset$ else Air
+	- surfaceY = &lambda;
+	- $xOffset =  Sin(x * frequency) * amplitude$
+	- $zOffset =  Sin(z * frequency) * amplitude$
+	- return Stone if $current_voxel.positonY < surfaceY + xOffset + zOffset$ else Air
    
   - I learned this from a video on Youtube, here is the [link](https://www.youtube.com/watch?v=CSa5O6knuwI) if you are interested.
 
-    Here are some photos of the results:
-    - classifications are Stone and Air:
-    - ![Result 1](Results/stone_class_nois.png)
-    - To see how greedy meshing works:
-    - ![Result 2](Results/grass_side_class_nois.png)
+	Here are some photos of the results:
+	- classifications are Stone and Air:
+	- ![Result 1](stone_result.png)
+	- To see how greedy meshing works:
+	- ![Result 2](side_grass_result.png)
    
   - Press [here](https://drive.google.com/file/d/1SbUYPf3C9hNm6X1Xu3zTPQ145w-ETbE8/view?usp=sharing) to see video that visualise my world.
-
-
-
-

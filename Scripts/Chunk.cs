@@ -41,7 +41,10 @@ public partial class Chunk : StaticBody3D
 			{
 				for (int z = 0; z < chunkSize; z++)
 				{
-					voxels[x, y, z] = new Voxel(GlobalTransform.Origin + new Vector3(x, y, z), Colors.Green, true);
+					Vector3 globalPosition = GlobalPosition + new Vector3(x, y, z);
+					Voxel.VoxelType type = DetermineVoxelType(globalPosition.X, globalPosition.Y, globalPosition.Z);
+					Boolean isActive = type == Voxel.VoxelType.Stone ? true: false;
+					voxels[x, y, z] = new Voxel(GlobalTransform.Origin + new Vector3(x, y, z), type, isActive);
 				}
 			}
 		}	
@@ -70,9 +73,15 @@ public partial class Chunk : StaticBody3D
 		}
 
 		Voxel voxel = voxels[x, y, z];
-		if (voxel.isActive)
+		if (voxel.type == Voxel.VoxelType.Air)
 		{
-			// Check and merge faces for optimization
+			return;
+		}
+		else
+		{
+			if (voxel.isActive)
+			{
+				// Check and merge faces for optimization
 			for (int face = 0; face < 6; face++)
 			{
 				if (IsFaceVisible(x, y, z, face))
@@ -80,7 +89,23 @@ public partial class Chunk : StaticBody3D
 					AddFaceData(x, y, z, face); // Add merged face data
 				}
 			}
+			}
 		}
+	}
+	private Voxel.VoxelType DetermineVoxelType(float x, float y, float z)
+	{
+		float frequency = 0.3f;
+		float amplitude = 5f;
+
+		float xOffset= MathF.Sin(x * frequency) * amplitude;
+		float zOffset= MathF.Sin(z * frequency) * amplitude;
+
+		float surfaceY = 10 + xOffset + zOffset;
+		GD.Print("Y: ", y, " surfaceY: ", surfaceY);
+		
+		return y < surfaceY ? Voxel.VoxelType.Stone : Voxel.VoxelType.Air;
+
+
 	}
 	private bool IsFaceVisible(int x, int y, int z, int face)
 	{
@@ -139,6 +164,11 @@ public partial class Chunk : StaticBody3D
 		int localY = Mathf.FloorToInt(localPos.Y);
 		int localZ = Mathf.FloorToInt(localPos.Z);
 
+		if (CheckNeighbors(neighborChunk, localX, localY, localZ))
+		{
+			return true;
+		}
+
 		// Ensure the indices are within bounds
 		if (localX < 0 || localX >= chunkSize || localY < 0 || localY >= chunkSize || localZ < 0 || localZ >= chunkSize)
 		{
@@ -148,7 +178,26 @@ public partial class Chunk : StaticBody3D
 		// Return the active state of the voxel
 		return !neighborChunk.voxels[localX, localY, localZ].isActive;
 	}
-
+	private Boolean CheckNeighbors(Chunk neighborChunk, int localX, int localY, int localZ)
+	{
+		if(neighborChunk.voxels[localX, localY, localZ].type == Voxel.VoxelType.Air)
+		{
+			return true;
+		}
+		if(localX < chunkSize - 1 && neighborChunk.voxels[localX + 1, localY, localZ].type == Voxel.VoxelType.Air)
+		{
+			return true;
+		}
+		if(localZ < chunkSize - 1 && neighborChunk.voxels[localX, localY, localZ + 1].type == Voxel.VoxelType.Air)
+		{
+			return true;
+		}
+		if(localZ < chunkSize - 1 && localX < chunkSize - 1 && neighborChunk.voxels[localX + 1, localY, localZ + 1].type == Voxel.VoxelType.Air)
+		{
+			return true;
+		}
+		return false;
+	}
 
 
 	private void AddFaceData(int x, int y, int z, int faceIndex)
@@ -264,13 +313,17 @@ public partial class Chunk : StaticBody3D
 
 		array[(int)Mesh.ArrayType.Vertex] = vertices.ToArray();
 		array[(int)Mesh.ArrayType.Index] = triangles.ToArray();
-		array[(int)Mesh.ArrayType.Color] = colors.ToArray();
+		array[(int)Mesh.ArrayType.TexUV] = uvs.ToArray();
 
 		arrayMesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, array);
+		Texture2D texture = ResourceLoader.Load<Texture2D>("res://textures/grass_side.png");
 
-		var material = new StandardMaterial3D();
-		material.VertexColorUseAsAlbedo = true; // Use vertex colors as the texture
-		material.CullMode = BaseMaterial3D.CullModeEnum.Disabled; // Disable face culling (double-sided rendering)
+		var material = new StandardMaterial3D()
+		{
+			AlbedoTexture = texture,
+			VertexColorUseAsAlbedo = true, // Use vertex colors as the texture
+			CullMode = BaseMaterial3D.CullModeEnum.Disabled // Disable face culling (double-sided rendering)
+		};
 		
 		arrayMesh.SurfaceSetMaterial(0, material);
 		meshInstance3D.Mesh = arrayMesh;
