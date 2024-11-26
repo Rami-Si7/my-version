@@ -38,4 +38,18 @@ the following two days were insane.
     - surfaceY = &lambda;
     - $xOffset =  Sin(x * frequency) * amplitude$
     - $zOffset =  Sin(z * frequency) * amplitude$
-    - return Stone if $current_voxel.positonY < surfaceY + xOffset + zOffset$ else Air 
+    - return Stone if $current_voxel.positonY < surfaceY + xOffset + zOffset$ else Air
+   
+  - I learned this from a video on Youtube, here is the [link](https://www.youtube.com/watch?v=CSa5O6knuwI) if you are interested.
+
+    Here are some photos of the results:
+    - classifications are Stone and Air:
+    - ![Result 1](Results/stone_class_nois.png)
+    - To see how greedy meshing works:
+    - ![Result 2](Results/grass_side_class_nois.png)
+   
+  - Press [here](https://drive.google.com/file/d/1SbUYPf3C9hNm6X1Xu3zTPQ145w-ETbE8/view?usp=sharing) to see video that visualise my world.
+
+
+
+
