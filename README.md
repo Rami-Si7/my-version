@@ -44,7 +44,7 @@ the following two days were insane.
 
     Here are some photos of the results:
     - classifications are Stone and Air:
-    - ![Result 1](Results/stone_class_nois.png)
+    - ![Result 1](Screenshot 2024-11-26 at 5.20.18.png)
     - To see how greedy meshing works:
     - ![Result 2](Results/grass_side_class_nois.png)
    
