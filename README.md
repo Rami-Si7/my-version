@@ -46,7 +46,7 @@ the following two days were insane.
     - classifications are Stone and Air:
     - ![Result 1](Screenshot-2024-11-26-at-5.20.18.png)
     - To see how greedy meshing works:
-    - ![Result 2](Screenshot-2024-11-26-at-5.20.57)
+    - ![Result 2](Screenshot-2024-11-26-at-5.20.57.png)
    
   - Press [here](https://drive.google.com/file/d/1SbUYPf3C9hNm6X1Xu3zTPQ145w-ETbE8/view?usp=sharing) to see video that visualise my world.
 
