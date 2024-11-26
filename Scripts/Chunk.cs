@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public partial class Chunk : StaticBody3D
 {
 	private MeshInstance3D meshInstance3D;
+	private int l = 1;
 	private CollisionObject3D collisionObject3D;
 	
 	public Voxel[,,] voxels{get; set;}
