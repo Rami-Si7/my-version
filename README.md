@@ -36,6 +36,6 @@ the following two days were insane.
   - To make our world look like terrain, we want to use Perlin Noise, but at first we want to do something easier and understand things. We generated noise using Sin function given frequency and amplitude.
   - To choose what is the voxel Type is if Air or Stone I did this:
     - surfaceY = &lambda;
-    - $ xOffset =  Sin(x * frequency) * amplitude $
-    - $ zOffset =  Sin(z * frequency) * amplitude $
-    - return Stone if $ current_voxel.positonY < surfaceY + xOffset + zOffset else Air $
+    - $$ xOffset =  Sin(x * frequency) * amplitude $$
+    - $$ zOffset =  Sin(z * frequency) * amplitude $$
+    - return Stone if $$ current_voxel.positonY < surfaceY + xOffset + zOffset$$ else Air 
