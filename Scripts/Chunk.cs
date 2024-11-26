@@ -299,9 +299,9 @@ public partial class Chunk : StaticBody3D
 	{
 		IterateVoxels();
 	if (vertices.Count == 0 || triangles.Count == 0)
-    {
-        return; // Skip creating a mesh for this chunk
-    }
+	{
+		return; // Skip creating a mesh for this chunk
+	}
 
 		var arrayMesh = new ArrayMesh();
 		var array = new Godot.Collections.Array();
@@ -317,7 +317,7 @@ public partial class Chunk : StaticBody3D
 		array[(int)Mesh.ArrayType.TexUV] = uvs.ToArray();
 
 		arrayMesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, array);
-		Texture2D texture = ResourceLoader.Load<Texture2D>("res://textures/grass_side.png");
+		Texture2D texture = ResourceLoader.Load<Texture2D>("res://grass_side.png");
 
 		var material = new StandardMaterial3D()
 		{
