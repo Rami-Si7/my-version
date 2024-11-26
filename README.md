@@ -31,3 +31,11 @@ the following two days were insane.
   - Finally i manged to remove the redundant faces from inside the World, i was all the time looking for the wrong thing, the algorithm that they described is correct but it wasn't working for me. i tried to change and tried another things, but the problem was actually how Godot engine handle the scenes ... it not like Unity, so I had to do this to make it work: when generating the world in world.cs i must only create *all the CHUNKS* and  then generate mesh for each chunk on, because when the algortihm was trying to figure out if this face of the current chunk need to visible or not, the other chunk that is trying locate is not build yet. So, that was the probelm it is fixed now.
   - you can [Watch the video](https://drive.google.com/file/d/13EVmF7_wwM1A_7VxCsVTVv4LWW49fPCF/view?usp=sharing)
   - 4 hours.
+
+## 25/11/2024:
+  - To make our world look like terrain, we want to use Perlin Noise, but at first we want to do something easier and understand things. We generated noise using Sin function given frequency and amplitude.
+  - To choose what is the voxel Type is if Air or Stone I did this:
+    - surfaceY = &lambda;
+    - $ xOffset =  Sin(x * frequency) * amplitude $
+    - $ zOffset =  Sin(z * frequency) * amplitude $
+    - return Stone if $ current_voxel.positonY < surfaceY + xOffset + zOffset else Air $
