@@ -5,6 +5,8 @@
 - [22/11/2024](#22112024)
 - [23/11/2024](#23112024)
 - [24/11/2024](#24112024)
+- [25/11/2024](#25112024)
+- [27/11/2024](#27112024)
 
 ## 20/11/2024:
 - after our first meeting when you asked from me to read Building a High-Performance Voxel Engine in Unity artical and try to implement it.
@@ -50,3 +52,13 @@ the following two days were insane.
 
    
   - Press [here](https://drive.google.com/file/d/1SbUYPf3C9hNm6X1Xu3zTPQ145w-ETbE8/view?usp=sharing) to see video that visualise my world.
+  - 3 hours
+## 27/11/2024:
+- To do procedural generation, in the world class I defined a method that generate more chunks of our world according to the x and z axis in addition to a radius. I knew which chunks must be generated according to the player global position. to be more efficient we made sure not to generate chunks for positions that the player has been in more than once.
+- To save resources I also destroyed chunks that are a far from the player global position by using unloalRradius > radius.
+- inorder to have more random and smooth terrain, I chnaged the way we get noise. We used GlobalNoise.cs that is given in the arcticle and then we got the noise based on the x and z points then we normalized the noise to stay between [0,1].
+- Before i forget, when the player moves in the world and new chunks are generated, if we look inside the world there still boundry mesh between the newly generated terrain and the one that has been geenrated in the previous frame, maybe we can solve it by setting a frame time which will help, but if we did not, the game becomes very slow due to many operations happen at once.
+- I did not use texture, only colors, it was easier for to me now.
+- 6 hours.
+- you can watch the video of procedural generation by clicking [here](https://drive.google.com/file/d/1esg79KLc_E_xlj4RUUYRC174s3Jy_Nlx/view?usp=sharing)
+
