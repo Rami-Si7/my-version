@@ -54,7 +54,7 @@ the following two days were insane.
   - Press [here](https://drive.google.com/file/d/1SbUYPf3C9hNm6X1Xu3zTPQ145w-ETbE8/view?usp=sharing) to see video that visualise my world.
   - 3 hours
 ## 27/11/2024:
-
+### Procedural Generation
 -![Procedural Generation](results/procedural_generation.png)
 - To do procedural generation, in the world class I defined a method that generate more chunks of our world according to the x and z axis in addition to a radius. I knew which chunks must be generated according to the player global position. to be more efficient we made sure not to generate chunks for positions that the player has been in more than once.
 - To save resources I also destroyed chunks that are a far from the player global position by using unloalRradius > radius.
