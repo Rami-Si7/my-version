@@ -46,14 +46,16 @@ the following two days were insane.
 
 	Here are some photos of the results:
 	- classifications are Stone and Air:
-	- ![Result 1](stone_result.png)
+	- ![Result 1](results/stone_result.png)
 	- To see how greedy meshing works:
-	- ![Result 2](side_grass_result.png)
+	- ![Result 2](results/side_grass_result.png)
 
    
   - Press [here](https://drive.google.com/file/d/1SbUYPf3C9hNm6X1Xu3zTPQ145w-ETbE8/view?usp=sharing) to see video that visualise my world.
   - 3 hours
 ## 27/11/2024:
+
+-![Procedural Generation](results/procedural-_generation.png)
 - To do procedural generation, in the world class I defined a method that generate more chunks of our world according to the x and z axis in addition to a radius. I knew which chunks must be generated according to the player global position. to be more efficient we made sure not to generate chunks for positions that the player has been in more than once.
 - To save resources I also destroyed chunks that are a far from the player global position by using unloalRradius > radius.
 - inorder to have more random and smooth terrain, I chnaged the way we get noise. We used GlobalNoise.cs that is given in the arcticle and then we got the noise based on the x and z points then we normalized the noise to stay between [0,1].
