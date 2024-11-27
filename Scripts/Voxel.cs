@@ -11,6 +11,7 @@ public partial class Voxel : Resource
 		Air,    // Represents empty space
 		Stone,  // Represents stone block
 		// Add more types as needed
+		Grass,
 	}
 	public Boolean isActive;
 

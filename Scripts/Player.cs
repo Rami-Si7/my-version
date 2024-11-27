@@ -3,17 +3,20 @@ using System;
 
 public partial class Player : CharacterBody3D
 {
-	public const float Speed = 5.0f;       // Horizontal movement speed
-	public const float FlySpeed = 5.0f;   // Vertical movement speed
+	public const float Speed = 10.0f;       // Horizontal movement speed
+	public const float FlySpeed = 10.0f;   // Vertical movement speed
 	public const float LookSensitivity = 0.1f; // Mouse look sensitivity
 
 	private Vector3 _velocity = Vector3.Zero;  // Player's velocity
 	private Vector2 _lookDelta = Vector2.Zero; // For mouse movement tracking
 
+	private Transform3D playerTransform;
+
 	public override void _Ready()
 	{
 		// Capture the mouse for first-person controls
 		Input.MouseMode = Input.MouseModeEnum.Captured;
+		playerTransform = GlobalTransform;
 	}
 
 	public override void _Input(InputEvent @event)
@@ -87,5 +90,9 @@ public partial class Player : CharacterBody3D
 
 		// Reset look delta
 		_lookDelta = Vector2.Zero;
+	}
+	public Vector3 getPlayerPosition()
+	{
+		return GlobalPosition;
 	}
 }

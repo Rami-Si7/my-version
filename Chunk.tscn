@@ -4,8 +4,9 @@
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_mkoip"]
 
-[node name="Chunk" type="StaticBody3D"]
+[node name="Chunk" type="StaticBody3D" node_paths=PackedStringArray("collisionShape3D")]
 script = ExtResource("1_vb614")
+collisionShape3D = NodePath("CollisionShape3D")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_mkoip")

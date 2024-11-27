@@ -1,13 +1,15 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using SimplexNoise;
 
 // [Tool]
 public partial class Chunk : StaticBody3D
 {
 	private MeshInstance3D meshInstance3D;
-	private int l = 1;
-	private CollisionObject3D collisionObject3D;
+
+	[Export]
+	private CollisionShape3D collisionShape3D;
 	
 	public Voxel[,,] voxels{get; set;}
 
@@ -16,6 +18,7 @@ public partial class Chunk : StaticBody3D
 	private List<Vector3> vertices = new List<Vector3>();
 	private List<int> triangles = new List<int>();
 	private List<Vector2> uvs = new List<Vector2>();
+
 
 	private int index;
 	// Called when the node enters the scene tree for the first time.
@@ -44,7 +47,7 @@ public partial class Chunk : StaticBody3D
 				{
 					Vector3 globalPosition = GlobalPosition + new Vector3(x, y, z);
 					Voxel.VoxelType type = DetermineVoxelType(globalPosition.X, globalPosition.Y, globalPosition.Z);
-					Boolean isActive = type == Voxel.VoxelType.Stone ? true: false;
+					Boolean isActive = type == Voxel.VoxelType.Air ? false: true;
 					voxels[x, y, z] = new Voxel(GlobalTransform.Origin + new Vector3(x, y, z), type, isActive);
 				}
 			}
@@ -93,20 +96,41 @@ public partial class Chunk : StaticBody3D
 			}
 		}
 	}
+	
+	// private Voxel.VoxelType DetermineVoxelType(float x, float y, float z)
+	// {
+	// 	// float frequency = 0.2f;
+	// 	// float amplitude = 5f;
+
+	// 	// float xyOffset = MathF.Sin((x + z) * frequency) * amplitude;
+	// 	// float yzffset = MathF.Sin((z + y) * frequency) * amplitude;
+
+	// 	// float surfaceY = 10 + xyOffset + yzffset;
+	// 	// GD.Print("Y: ", y, " surfaceY: ", surfaceY);
+
+		
+	// 	return y < height ? Voxel.VoxelType.Stone : Voxel.VoxelType.Air;
+
+
+	// }
 	private Voxel.VoxelType DetermineVoxelType(float x, float y, float z)
 	{
-		float frequency = 0.3f;
-		float amplitude = 5f;
+		float noiseValue = GlobalNoise.GetNoisePoint((int)x, (int)z); 
+		// Normalize noise value to [0, 1]
+		float normalizedNoiseValue = (noiseValue + 1) / 2;
 
-		float xOffset= MathF.Sin(x * frequency) * amplitude;
-		float zOffset= MathF.Sin(z * frequency) * amplitude;
+		// Calculate maxHeight
+		float maxHeight = normalizedNoiseValue * World.Instance.maxHeight;
+		if(maxHeight > World.Instance.topPoint)
+		{
+			World.Instance.topPoint = maxHeight;
+		}
 
-		float surfaceY = 10 + xOffset + zOffset;
-		GD.Print("Y: ", y, " surfaceY: ", surfaceY);
-		
-		return y < surfaceY ? Voxel.VoxelType.Stone : Voxel.VoxelType.Air;
 
-
+		if (y <= maxHeight)
+			return Voxel.VoxelType.Stone; // Solid voxel
+		else
+			return Voxel.VoxelType.Air; // Air voxel
 	}
 	private bool IsFaceVisible(int x, int y, int z, int face)
 	{
@@ -298,38 +322,60 @@ public partial class Chunk : StaticBody3D
 	public void GenerateMesh()
 	{
 		IterateVoxels();
-	if (vertices.Count == 0 || triangles.Count == 0)
-	{
-		return; // Skip creating a mesh for this chunk
-	}
-
-		var arrayMesh = new ArrayMesh();
-		var array = new Godot.Collections.Array();
+		if (vertices.Count == 0 || triangles.Count == 0)
+		{
+			return; // Skip creating a mesh for this chunk
+		}
 		var colors = new List<Color>();
 		foreach (var vertex in vertices)
 		{
-			colors.Add(new Color(GD.Randf(), GD.Randf(), GD.Randf()));
+			if (vertex.Y >= World.Instance.topPoint - 2)
+			{
+				// Snow (highest elevation)
+				colors.Add(new Color(1.0f, 1.0f, 1.0f)); // White
+			}
+			else if (vertex.Y < chunkSize && vertex.Y >= chunkSize / 2)
+			{
+				// Grass (medium-high elevation)
+				colors.Add(new Color(0.0f, 1.0f, 0.0f)); // Green
+			}
+			else if (vertex.Y < chunkSize / 2 && vertex.Y >= chunkSize / 4)
+			{
+				// Dirt (medium-low elevation)
+				colors.Add(new Color(0.54f, 0.27f, 0.07f)); // Brown
+			}
+			else
+			{
+				// Stone (lowest elevation)
+				colors.Add(new Color(0.5f, 0.5f, 0.5f)); // Gray
+			}
+
 		}
+
+		var arrayMesh = new ArrayMesh();
+		var array = new Godot.Collections.Array();
+
 		array.Resize((int)Mesh.ArrayType.Max);
 
 		array[(int)Mesh.ArrayType.Vertex] = vertices.ToArray();
 		array[(int)Mesh.ArrayType.Index] = triangles.ToArray();
-		array[(int)Mesh.ArrayType.TexUV] = uvs.ToArray();
+		array[(int)Mesh.ArrayType.Color] = colors.ToArray();
 
 		arrayMesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, array);
-		Texture2D texture = ResourceLoader.Load<Texture2D>("res://grass_side.png");
+		// Texture2D texture = ResourceLoader.Load<Texture2D>("res://stone.png");
 
 		var material = new StandardMaterial3D()
 		{
-			AlbedoTexture = texture,
 			VertexColorUseAsAlbedo = true, // Use vertex colors as the texture
 			CullMode = BaseMaterial3D.CullModeEnum.Disabled // Disable face culling (double-sided rendering)
 		};
 		
 		arrayMesh.SurfaceSetMaterial(0, material);
 		meshInstance3D.Mesh = arrayMesh;
-
+		// collisionShape3D.Shape = arrayMesh.CreateTrimeshShape();
 	}
+	
+
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
