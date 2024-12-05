@@ -7,6 +7,7 @@
 - [24/11/2024](#24112024)
 - [25/11/2024](#25112024)
 - [27/11/2024](#27112024)
+- [4/12/2024](#4122024)
 
 ## 20/11/2024:
 - after our first meeting when you asked from me to read Building a High-Performance Voxel Engine in Unity artical and try to implement it.
@@ -63,4 +64,13 @@ the following two days were insane.
 - I did not use texture, only colors, it was easier for to me now.
 - 6 hours.
 - you can watch the video of procedural generation by clicking [here](https://drive.google.com/file/d/1esg79KLc_E_xlj4RUUYRC174s3Jy_Nlx/view?usp=sharing) (BTW enjoy the music)
+
+## 4/12/2024:
+- I have been busy all week with another projct, what i tried to do today is adding the feature of breaking or placing block, to do that first I must add RayCast, then i added a BlockHighligth to view the block that i want to break or the poisition where i want to place a block. I encountered a problem with destroying the blocks, when i set the collisionShape of the chunk to be the arrayMesh.CreateTriMeshShape(), the raycast was not detecting anything, but if i go inside the world, strangley it was detecting blocks. But, we dont want that... so i tried to use CreateConvexShape. it worked for detecting blocks. So tried to break a block, it was deleted but stangley the collison shape of the block was not deleteed( i tried to do it manualy, but failed).
+- most of the time I was not working on this issue, i was thinking of the most efficient way to break or place block in the matter of rendering meshes. they easy solution is after deleting the block (aka set it to air so we dont render it), is to regenrate the mesh for the current chunk.(as i searcehd the size of chunk in minecraft is (16,64,16)) so when the player break or place blocks we should regenrate meshes for all the visible faces it's quite a lot of work for updating one block. So, I was trying to figure out a better approach and i came up with something. when we break one block only the same block and it's neighbourhood get affected and nothing else, So, why we dont only regenrate meshs for these 7 blocks only(there are 6 neighbours ). Tomorrow I want to pursue this approach and try to make it work I already have an idea on what to do... . But before that i tried to do it with regenrate the mesh for the whole chunk and then encountered with the issue I mentioned earlier.
+- for tomorrow:
+  - fix the issue
+  - efficient break and place blocks.
+
+ - 9 hours
 
