@@ -8,6 +8,8 @@
 - [25/11/2024](#25112024)
 - [27/11/2024](#27112024)
 - [4/12/2024](#4122024)
+- [5/12/2024](#5122024)
+- [6/12/2024](#6122024)
 
 ## 20/11/2024:
 - after our first meeting when you asked from me to read Building a High-Performance Voxel Engine in Unity artical and try to implement it.
@@ -76,3 +78,21 @@ the following two days were insane.
   - efficient break and place blocks.
 
  - 9 hours
+
+## 5/12/2024:
+
+- Today I fixed the issue that i had before. after a lot of debugging it was an issue with tool that i have been using i switch from list that saves the triangles and vertices to SurfaceTool. but that didn't completely fixed my problem becasue i had another one which for some faces their coliisionShape are inside the block not in the outside, so i figured it out. i switched the face indices in the where i generate mesh and it worked, So by that i was manged to detect the objects using raycast.
+- Now regarding deletion of blocks, I used this approach, i get the global position of the block using raycast, then i find the local position in that chunk. when i find the exact block I set it's type to Air then regenrate mesh for the current chunk.
+- 7 hours
+
+## 6/12/2024:
+- Before trying to implement more efficient appraoch of block deletion, i wanted to check if evertying worked perfectly. I noticed that when i delete a block which lays at the boundry of the chunk, the face that connect the neighbouring chunk are still invisible but it should be, so i had to regenrate mesh for all the neighbouring chunks to make all the invisible faces visible. for example (if the block's x position at the boundry (0 or chunksize - 1) i should regenerate mesh for the chunks that contain those blocks that theri x position is on x= -1 and chunksize)
+- regarding the efficient approach i tried multiple ways but i keep failing on how I can regenerating only the 7 needed blocks, i keep finding solutuon that their approach is based on regenrating the chunk whole mesh. (I will be glad for an assistance :))
+- So i went and did the place block feature which is really much easier than break block. i used raycast.GetCollisionNormal to know where eaxcyly i want to place the block, but otherwise it was straightforward.
+  
+- Note: once i figure out the efficient approach regarding on how to regenerate mesh i can applay it to break and place block easily.
+https://drive.google.com/file/d/1bIEB5QkIn7pQFPi5FgadgXiUNOmq3hPy/view?usp=sharing
+- 7 hours
+
+- you can watch the video of breaking and placing by clicking [here](https://drive.google.com/file/d/1bIEB5QkIn7pQFPi5FgadgXiUNOmq3hPy/view?usp=sharing)
+  
