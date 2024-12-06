@@ -8,7 +8,7 @@
 script = ExtResource("1_vb614")
 collisionShape3D = NodePath("CollisionShape3D")
 
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_mkoip")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]

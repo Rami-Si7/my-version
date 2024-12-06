@@ -15,6 +15,10 @@ public partial class Voxel : Resource
 	}
 	public Boolean isActive;
 
+	public Voxel()
+	{
+		
+	}
 	public Voxel(Vector3 position, VoxelType type, Boolean isActive)
 	{
 		this.position = position;

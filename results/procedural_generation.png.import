@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c70vurmt0dvit"
-path="res://.godot/imported/stone_result.png-63915ad9d0a68e29589cd5ac60b41d71.ctex"
+uid="uid://c5kgfhtbkx5j8"
+path="res://.godot/imported/procedural_generation.png-ab254ce3f6e233a6c3d19525dad0a371.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://results/stone_result.png"
-dest_files=["res://.godot/imported/stone_result.png-63915ad9d0a68e29589cd5ac60b41d71.ctex"]
+source_file="res://results/procedural_generation.png"
+dest_files=["res://.godot/imported/procedural_generation.png-ab254ce3f6e233a6c3d19525dad0a371.ctex"]
 
 [params]
 

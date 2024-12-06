@@ -63,4 +63,3 @@ the following two days were insane.
 - I did not use texture, only colors, it was easier for to me now.
 - 6 hours.
 - you can watch the video of procedural generation by clicking [here](https://drive.google.com/file/d/1esg79KLc_E_xlj4RUUYRC174s3Jy_Nlx/view?usp=sharing)
-
