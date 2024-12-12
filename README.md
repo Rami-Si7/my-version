@@ -65,9 +65,6 @@ the following two days were insane.
 - Before i forget, when the player moves in the world and new chunks are generated, if we look inside the world there still boundry mesh between the newly generated terrain and the one that has been geenrated in the previous frame, maybe we can solve it by setting a frame time which will help, but if we did not, the game becomes very slow due to many operations happen at once.
 - I did not use texture, only colors, it was easier for to me now.
 - 6 hours.
-<<<<<<< HEAD
-- you can watch the video of procedural generation by clicking [here](https://drive.google.com/file/d/1esg79KLc_E_xlj4RUUYRC174s3Jy_Nlx/view?usp=sharing)
-
 - you can watch the video of procedural generation by clicking [here](https://drive.google.com/file/d/1esg79KLc_E_xlj4RUUYRC174s3Jy_Nlx/view?usp=sharing) (BTW enjoy the music)
 
 ## 4/12/2024:
@@ -86,12 +83,11 @@ the following two days were insane.
 - 7 hours
 
 ## 6/12/2024:
-- Before trying to implement more efficient appraoch of block deletion, i wanted to check if evertying worked perfectly. I noticed that when i delete a block which lays at the boundry of the chunk, the face that connect the neighbouring chunk are still invisible but it shouldn't  be, so i had to regenrate mesh for all the neighbouring chunks to make all the invisible faces visible. for example (if the block's x position at the boundry (0 or chunksize - 1) i should regenerate mesh for the chunks that contain those blocks that theri x position is on x = -1 or chunksize)
+- Before trying to implement more efficient appraoch of block deletion, i wanted to check if evertying worked perfectly. I noticed that when i delete a block which lays at the boundry of the chunk, the face that connect the neighbouring chunk are still invisible but it shouldn't  be, so i had to regenrate mesh for all the neighbouring chunks to make all the invisible faces visible. for example (if the block's x position at the boundry (0 or chunksize - 1) i should regenerate mesh for the chunks that contain those blocks that are neighbours of the block that has  x position is 0 or chunksize - 1)
 - regarding the efficient approach i tried multiple ways but i keep failing on how I can regenerating only the 7 needed blocks, i keep finding solutuon that their approach is based on regenrating the chunk whole mesh. (I will be glad for an assistance :))
 - So i went and did the place block feature which is really much easier than break block. i used raycast.GetCollisionNormal to know where eaxcyly i want to place the block, but otherwise it was straightforward.
   
 - Note: once i figure out the efficient approach regarding on how to regenerate mesh i can applay it to break and place block easily.
-https://drive.google.com/file/d/1bIEB5QkIn7pQFPi5FgadgXiUNOmq3hPy/view?usp=sharing
 - 7 hours
 
 - you can watch the video of breaking and placing by clicking [here](https://drive.google.com/file/d/1bIEB5QkIn7pQFPi5FgadgXiUNOmq3hPy/view?usp=sharing)
