@@ -135,9 +135,9 @@ public partial class World : Node3D
 		{
 			chunk.Value.GenerateMesh();		
 		}
-	chunks[new Vector3(0,0,0)].BreakVoxels(new Vector3(0,0,0.0f), new Vector3(0,0,0.0f));
+	// chunks[new Vector3(0,0,0)].BreakVoxels(new Vector3(0,0,0.0f), new Vector3(0,0,0.0f));
 	// chunks[new Vector3(0,0,0)].BreakVoxels(new Vector3(0.6f,0,0.5f), new Vector3(0.6f,0,0.5f));
-	chunks[new Vector3(0,0,0)].BreakVoxels(new Vector3(0,0.78f,0f), new Vector3(0,0.78f,0f));
+	// chunks[new Vector3(0,0,0)].BreakVoxels(new Vector3(0,0.78f,0f), new Vector3(0,0.78f,0f));
 	// chunks[new Vector3(0,0,0)].BreakVoxels(new Vector3(0,0.9f,0.55f), new Vector3(0,0.78f,0.55f));	
 	// chunks[new Vector3(0,0,0)].BreakVoxels(new Vector3(0,0.9f,0.1f), new Vector3(0,0.9f,0.1f));
 	// chunks[new Vector3(0,0,0)].BreakVoxels(new Vector3(0,0.9f,0.14f), new Vector3(0,0.9f,0.14f));

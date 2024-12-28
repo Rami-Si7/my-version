@@ -290,5 +290,6 @@ public class Octree
 		return position.X >= this.position.X && position.X <= this.position.X + offSet &&
 			position.Y >= this.position.Y && position.Y <= this.position.Y + offSet &&
 			position.Z >= this.position.Z && position.Z <= this.position.Z + offSet;
+
 	}
 }
