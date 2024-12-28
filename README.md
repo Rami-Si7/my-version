@@ -12,8 +12,8 @@
 - [6/12/2024](#6122024)
 - [18/12/2024](#18122024)
 - [25/12/2024](#25122024)
-- [26/12/2024](#26122024)
-- [27/12/2024](#27122024)
+- [26-27/12/2024](#26122024)
+
 
 ## 20/11/2024:
 - after our first meeting when you asked from me to read Building a High-Performance Voxel Engine in Unity artical and try to implement it.
@@ -129,7 +129,7 @@ the following two days were insane.
 
 - 8 hours
 
-## 26/12/2024:
+## 26-27/12/2024:
 -Now we are going to test the if what we designed works or not, in order to that we we build mesh for each voxel. For now lets render all the faces of the mesh and to see if the breaking of voxel really works and each voxel divide into smaller voxels at each break.
 
 Here is the result:
