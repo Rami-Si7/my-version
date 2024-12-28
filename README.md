@@ -134,7 +134,7 @@ the following two days were insane.
 Here is the result:
 | Pose No.    | Normal | WireFrame  | OverDraw |
 | ----------- | ---------- | ---------- | ----------------- |
-| 1           | ![Base Model 1](Octree-Images/normal.png) | ![Our Model 1](Octree-Images/overdraw.png) | ![GT 1](Octree-Images/wireframe.png) |
+| 1           | ![Base Model 1](Octree Images/normal.png) | ![Our Model 1](Octree Images/overdraw.png) | ![GT 1](Octree Images/wireframe.png) |
 
      
   
