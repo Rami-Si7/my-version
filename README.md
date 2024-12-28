@@ -122,7 +122,7 @@ the following two days were insane.
 - by using the collsion point of the player's axe we know exactly which voxel he hit, we need to work on this voxel:
   - we will locate the leaf that contains the collison point position.
   - we will use the method that creates children node for the root:
-    - it create 8 children, their position will be calculated based on their parent position and the level they are at. For example, the root node is at position (0,0,0) and at level 0. it's children we be at (0,0,0) , (0.5, 0, 0), (0.5, 0.5, 0), (0, 0.5, 0), (0,0,0.5) , (0.5, 0, 0.5), (0.5, 0.5, 0.5), (0, 0.5, 0.5). WHY 0.5? it is basically 0.5 to the power of level so 0.5^1 they are at level 1.
+    - it create 8 children, their position will be calculated based on their parent position and the level they are at. For example, the root node is at position (0,0,0) with size 1 and at level 0. it's children we be at (0,0,0) , (0.5, 0, 0), (0.5, 0.5, 0), (0, 0.5, 0), (0,0,0.5) , (0.5, 0, 0.5), (0.5, 0.5, 0.5), (0, 0.5, 0.5). WHY 0.5? it is basically 0.5 to the power of level so 0.5^1 they are at level 1.
     - then to know which voxel child the player broke we are going to use the collsion point to find which child contain this psoition. then we set it to Air and the rest to Stone.
 This steps above describes all the work needed to creat an octree obejct on the following dates we will talk about mesh generation.
 I found this approach the easiest one and it's dynamic according to the player decisions in game.
