@@ -1,0 +1,30 @@
+[gd_scene load_steps=7 format=3 uid="uid://qd2eq8j1vfuu"]
+
+[ext_resource type="Script" path="res://Scripts/ChunkManger.cs" id="1_enu8u"]
+[ext_resource type="PackedScene" uid="uid://dk2ra815dywgn" path="res://Chunk.tscn" id="2_7fv51"]
+[ext_resource type="PackedScene" uid="uid://bv8ugragvhye7" path="res://player.tscn" id="3_rcgi6"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_emxce"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_hvf1u"]
+sky_material = SubResource("ProceduralSkyMaterial_emxce")
+
+[sub_resource type="Environment" id="Environment_hm82j"]
+background_mode = 2
+sky = SubResource("Sky_hvf1u")
+tonemap_mode = 2
+glow_enabled = true
+
+[node name="ChunkManger" type="Node"]
+script = ExtResource("1_enu8u")
+chunkScene = ExtResource("2_7fv51")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_hm82j")
+
+[node name="Player" parent="." instance=ExtResource("3_rcgi6")]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.185855, 0.982577, 0, -0.982577, 0.185855, 0, 16.0401, 0)

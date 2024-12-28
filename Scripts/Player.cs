@@ -30,7 +30,7 @@ public partial class Player : CharacterBody3D
 		// Handle mouse motion for looking around
 		if (@event is InputEventMouseMotion mouseMotion)
 		{
-			_lookDelta = mouseMotion.Relative * LookSensitivity;
+			_lookDelta = mouseMotion.Relative;
 		}
 
 		// Toggle mouse capture with Escape
@@ -52,15 +52,20 @@ public partial class Player : CharacterBody3D
 	{
 		// Capture player input for movement
 		Vector3 direction = Vector3.Zero;
+		Vector3 rotation = RotationDegrees;
+		rotation.Y -= _lookDelta.X * LookSensitivity;
+		rotation.X -= _lookDelta.Y * LookSensitivity;
+		RotationDegrees = rotation;
+		_lookDelta = Vector2.Zero;
 
 		// Horizontal movement (WASD or arrow keys)
-		if (Input.IsActionPressed("ui_up")) // Move forward
+		if (Input.IsActionPressed("UP")) // Move forward
 			direction -= Transform.Basis.Z;
-		if (Input.IsActionPressed("ui_down")) // Move backward
+		if (Input.IsActionPressed("DOWN")) // Move backward
 			direction += Transform.Basis.Z;
-		if (Input.IsActionPressed("ui_left")) // Move left
+		if (Input.IsActionPressed("LEFT")) // Move left
 			direction -= Transform.Basis.X;
-		if (Input.IsActionPressed("ui_right")) // Move right
+		if (Input.IsActionPressed("RIGHT")) // Move right
 			direction += Transform.Basis.X;
 
 		// Vertical movement (Space and Shift)
@@ -105,60 +110,76 @@ public partial class Player : CharacterBody3D
 	public override void _Process(double delta)
 	{
 
-		// Get the collision point
 		Vector3 collisionPoint = rayCast3D.GetCollisionPoint();
 
-		// Update the position of the dot
 		dot.GlobalTransform = new Transform3D(dot.GlobalTransform.Basis, collisionPoint);
 
-		// Make the dot visible
 		dot.Visible = true;
 		
+		// if(rayCast3D.IsColliding() && rayCast3D.GetCollider() is Chunk chunk)
+		// {
+		// 	blockHighlight.Visible = true;
+
+		// 	var blockPosition = rayCast3D.GetCollisionPoint() - 0.5f * rayCast3D.GetCollisionNormal();
+		// 	var intBlockPosition = new Vector3I(Mathf.FloorToInt(blockPosition.X), Mathf.FloorToInt(blockPosition.Y), Mathf.FloorToInt(blockPosition.Z));
+		// 	blockHighlight.GlobalPosition = intBlockPosition + new Vector3(0.5f, 0.5f, 0.5f);
+		// 	blockHighlight.GlobalRotation = Vector3.Zero;
+
+		// 	if (Input.IsActionJustPressed("break"))
+		// 	{
+		// 		Chunk _chunk = World.Instance.GetChunkAt(blockPosition);
+
+		// 		if (_chunk != null)
+		// 		{
+		// 			// local position within the chunk
+		// 			Vector3 localPosition = blockPosition - chunk.GlobalTransform.Origin;
+		// 			GD.Print("position od breaking block", localPosition);
+
+		// 			// break block
+		// 			_chunk.SetBlock(localPosition, Chunk.OperationType.Break, rayCast3D.GetCollisionNormal());
+					
+		// 		}
+		// 	}
+		// 	if (Input.IsActionJustPressed("build"))
+		// 	{
+		// 		Chunk _chunk = World.Instance.GetChunkAt(blockPosition);
+
+		// 		if (_chunk != null)
+		// 		{
+		// 			// local position within the chunk
+		// 			Vector3 localPosition = blockPosition - chunk.GlobalTransform.Origin + rayCast3D.GetCollisionNormal();
+
+		// 			// place block
+		// 			_chunk.SetBlock(localPosition, Chunk.OperationType.Place, rayCast3D.GetCollisionNormal());
+		// 		}
+		// 	}
+
+		// }
+		// else
+		// {
+		// 	blockHighlight.Visible = false;
+		// }
 		if(rayCast3D.IsColliding() && rayCast3D.GetCollider() is Chunk chunk)
 		{
-			// GD.Print("COLLISON DETECTED at position: ", rayCast3D.GetCollisionPoint());
-			blockHighlight.Visible = true;
-			var blockPosition = rayCast3D.GetCollisionPoint() - 0.5f * rayCast3D.GetCollisionNormal();
-			var intBlockPosition = new Vector3I(Mathf.FloorToInt(blockPosition.X), Mathf.FloorToInt(blockPosition.Y), Mathf.FloorToInt(blockPosition.Z));
-			blockHighlight.GlobalPosition = intBlockPosition + new Vector3(0.5f, 0.5f, 0.5f);
-			blockHighlight.GlobalRotation = Vector3.Zero;
+			var exactPosition = rayCast3D.GetCollisionPoint();
 
+			var blockPosition = rayCast3D.GetCollisionPoint() - 0.5f * rayCast3D.GetCollisionNormal();
 			if (Input.IsActionJustPressed("break"))
 			{
-				GD.Print("IS BREAKING!");
-						// Find the chunk containing the block
 				Chunk _chunk = World.Instance.GetChunkAt(blockPosition);
-
 				if (_chunk != null)
 				{
-					// Calculate the local position within the chunk
+					// local position within the chunk
+					Vector3 localExactPosition = exactPosition - chunk.GlobalTransform.Origin;
 					Vector3 localPosition = blockPosition - chunk.GlobalTransform.Origin;
-					GD.Print("position od breaking block", localPosition);
+					GD.Print("position of breaking block", localExactPosition);
+					GD.Print("position of block when breaking ", localPosition);
 
-					// Delete the block (mark it as Air/Empty in your voxel array)
-					_chunk.BreakBlock(localPosition);
+					// break block
+					_chunk.BreakVoxels(localExactPosition, localPosition);
 					
 				}
 			}
-			if (Input.IsActionJustPressed("build"))
-			{
-				Chunk _chunk = World.Instance.GetChunkAt(blockPosition);
-
-				if (_chunk != null)
-				{
-					// Calculate the local position within the chunk
-					Vector3 localPosition = blockPosition - chunk.GlobalTransform.Origin + rayCast3D.GetCollisionNormal();
-					GD.Print("place");
-					// Delete the block (mark it as Air/Empty in your voxel array)
-					_chunk.BuildBlock(localPosition);
-				}
-			}
-
-		}
-		else
-		{
-			// GD.Print("IN HERE");
-			blockHighlight.Visible = false;
 		}
 	}
 }

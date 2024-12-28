@@ -1,7 +1,8 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
-// [Tool]
+[Tool]
 public partial class Voxel : Resource
 {
 	public Vector3 position;
@@ -15,14 +16,17 @@ public partial class Voxel : Resource
 	}
 	public Boolean isActive;
 
+	public Octree octree;
+
 	public Voxel()
 	{
 		
 	}
-	public Voxel(Vector3 position, VoxelType type, Boolean isActive)
+	public Voxel(Vector3 position, VoxelType type, Boolean isActive, Vector3 octreePosition)
 	{
 		this.position = position;
 		this.type = type;
 		this.isActive = isActive;
+		this.octree = new Octree(octreePosition, 0, true, type);
 	}
 }

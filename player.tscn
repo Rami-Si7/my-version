@@ -22,6 +22,7 @@ radius = 0.03
 height = 0.1
 
 [node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("rayCast3D", "blockHighlight", "dot")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
 script = ExtResource("1_1gq3o")
 rayCast3D = NodePath("Camera3D/RayCast3D")
 blockHighlight = NodePath("BlockHighlight")

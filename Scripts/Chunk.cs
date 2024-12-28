@@ -1,11 +1,15 @@
+using System.Collections.Generic;
 using Godot;
 using System;
-using System.Collections.Generic;
 using SimplexNoise;
+using System.Linq;
+using System.Threading;
+using System.Drawing;
 
 [Tool]
 public partial class Chunk : StaticBody3D
 {
+	
 	private MeshInstance3D meshInstance3D;
 
 	[Export]
@@ -15,11 +19,14 @@ public partial class Chunk : StaticBody3D
 
 	private int chunkSize;
 
-	private List<Vector3> vertices = new List<Vector3>();
-	private List<int> triangles = new List<int>();
+	private Dictionary<Vector3, List<Vector3>> vertices = new Dictionary<Vector3, List<Vector3>>();
+	private Dictionary<Vector3, List<Vector3[]>> triangles = new Dictionary<Vector3, List<Vector3[]>>();
 	private List<Vector2> uvs = new List<Vector2>();
+	private Dictionary<int, Dictionary<Vector3, Voxel.VoxelType>> divisons;
 	
-	private SurfaceTool surfaceTool = new();
+	public SurfaceTool surfaceTool = new();
+
+	private Random random = new Random();
 
 	private static readonly Vector3I[] _vertices = new Vector3I[]
 	{
@@ -40,24 +47,49 @@ public partial class Chunk : StaticBody3D
 	private static readonly int[] _back = new int[] { 7, 5, 4, 6 };
 	private static readonly int[] _front = new int[] { 2, 0, 1, 3 };
 
+	public enum OperationType
+	{
+		Break,
 
-	private int index;
-	// Called when the node enters the scene tree for the first time.
+		Place,
+	}
+
+
+
+	/// <summary>
+	/// 
+	/// Octree vars
+	/// the idea is each chunk will represent an Octree
+	/// 
+	/// 
+	/// 
+	/// 
+	/// 
+	/// 
+	/// 
+	/// 
+	/// 
+	/// 
+	/// 
+	/// </summary>
+	public static int levels = 3;
+	public int grassCount = 0;
+	public int airCount = 0;
+
+
 	public override void _Ready()
 	{
-		// GD.Print("in ready");
 		meshInstance3D = GetNode<MeshInstance3D>("MeshInstance3D");
-		// this.voxels = new Voxel[this.chunkSize, this.chunkSize, this.chunkSize];
+		
 
 	}
-	public void Initialize(int chunkSize)
+	public void Initialize(int chunkSize, Vector3 position)
 	{
 		// GD.Print("in Initialize");
 		this.chunkSize = chunkSize;
 		voxels = new Voxel[this.chunkSize, this.chunkSize, this.chunkSize];
 		initializeVoxels();
 	}
-
 	private void initializeVoxels()
 	{
 		for (int x = 0; x < chunkSize; x++)
@@ -66,65 +98,30 @@ public partial class Chunk : StaticBody3D
 			{
 				for (int z = 0; z < chunkSize; z++)
 				{
-					Vector3 globalPosition = GlobalPosition + new Vector3(x, y, z);
+					Vector3 voxelPosition = new Vector3(x, y, z);
+					Vector3 globalPosition = GlobalPosition + voxelPosition;
+
 					Voxel.VoxelType type = DetermineVoxelType(globalPosition.X, globalPosition.Y, globalPosition.Z);
 					Boolean isActive = type == Voxel.VoxelType.Air ? false: true;
-					voxels[x, y, z] = new Voxel(GlobalTransform.Origin + new Vector3(x, y, z), type, isActive);
+					if (type == Voxel.VoxelType.Air)
+					{
+						airCount++;
+					}
+					else
+					{
+						grassCount++;
+					}
+
+					voxels[x, y, z] = new Voxel(GlobalTransform.Origin + new Vector3(x, y, z), type, isActive, new Vector3(x, y, z));
+
+					vertices[voxelPosition] = new List<Vector3>();
+
+					triangles[voxelPosition] = new List<Vector3[]>();
 				}
 			}
 		}	
 	}
-	public void GenerateMesh()
-	{
-		surfaceTool.Begin(Mesh.PrimitiveType.Triangles);
-
-		for (int x = 0; x < chunkSize; x++)
-		{
-			for (int y = 0; y < chunkSize; y++)
-			{
-				for (int z = 0; z < chunkSize; z++)
-				{
-					ProcessVoxel(x, y, z);
-				}
-			}
-		}
-
-		surfaceTool.SetMaterial(new StandardMaterial3D()
-		{
-			VertexColorUseAsAlbedo = true, // Use vertex colors as the texture
-			AlbedoColor = Colors.DarkGreen,
-			CullMode = BaseMaterial3D.CullModeEnum.Disabled // Disable face culling (double-sided rendering)
-		});
-
-		var arrayMesh = surfaceTool.Commit();
-		meshInstance3D.Mesh = arrayMesh;
-		collisionShape3D.Shape = arrayMesh.CreateTrimeshShape();
-	}
-	public void GenerateMeshNeighbor(int x, int y, int z)
-	{
-		
-		surfaceTool.Begin(Mesh.PrimitiveType.Triangles);
-		ProcessVoxel(x, y, z);
-		ProcessVoxel(x + 1, y, z);
-		ProcessVoxel(x, y + 1, z);
-		ProcessVoxel(x, y, z + 1);
-		ProcessVoxel(x - 1, y, z);
-		ProcessVoxel(x, y - 1, z);
-		ProcessVoxel(x, y, z - 1);
-
-		surfaceTool.SetMaterial(new StandardMaterial3D()
-		{
-			VertexColorUseAsAlbedo = true, // Use vertex colors as the texture
-			AlbedoColor = Colors.WebGray,
-			CullMode = BaseMaterial3D.CullModeEnum.Disabled // Disable face culling (double-sided rendering)
-		});
-
-		var arrayMesh = surfaceTool.Commit();
-		
-		meshInstance3D.Mesh = arrayMesh;
-		collisionShape3D.Shape = arrayMesh.CreateTrimeshShape();
-	}
-	private void ProcessVoxel(int x, int y, int z)
+		private void ProcessVoxel(int x, int y, int z)
 	{
 		if (voxels == null || x < 0 || x >= voxels.GetLength(0) ||
 			y < 0 || y >= voxels.GetLength(1) || z < 0 || z >= voxels.GetLength(2))
@@ -142,43 +139,98 @@ public partial class Chunk : StaticBody3D
 		{
 			if (IsFaceVisible(x, y, z, 0))
 			{
-				// GD.Print("is visiable!");
 				AddFaceWithSurfaceTool(x, y, z, _top);
 			}
 			if (IsFaceVisible(x, y, z, 1))
 			{
-				// GD.Print("is visiable!");
 				AddFaceWithSurfaceTool(x, y, z, _bottom);
 			}
 			if (IsFaceVisible(x, y, z, 2))
 			{
-				// GD.Print("is visiable!");
 				AddFaceWithSurfaceTool(x, y, z, _left);
 			}			
 			if (IsFaceVisible(x, y, z, 3))
 			{
-				// GD.Print("is visiable!");
 				AddFaceWithSurfaceTool(x, y, z, _right);
 			}			
 			if (IsFaceVisible(x, y, z, 4))
 			{
-				// GD.Print("is visiable!");
 				AddFaceWithSurfaceTool(x, y, z, _back);
 			}			
 			if (IsFaceVisible(x, y, z, 5))
 			{
-				// GD.Print("is visiable!");
 				AddFaceWithSurfaceTool(x, y, z, _front);
 			}
 		}
 	}
+	
+	public void GenerateMesh()
+	{
+		surfaceTool.Begin(Mesh.PrimitiveType.Triangles);
+
+		for (int x = 0; x < chunkSize; x++)
+		{
+			for (int y = 0; y < chunkSize; y++)
+			{
+				for (int z = 0; z < chunkSize; z++)
+				{
+					ProcessVoxel(x, y, z);
+				}
+			}
+		}
+		surfaceTool.SetMaterial(new StandardMaterial3D()
+		{
+			VertexColorUseAsAlbedo = true, 
+			AlbedoColor = Colors.DarkGreen,
+			CullMode = BaseMaterial3D.CullModeEnum.Disabled 
+		});
+
+		var arrayMesh = surfaceTool.Commit();
+		meshInstance3D.Mesh = arrayMesh;
+		collisionShape3D.Shape = arrayMesh.CreateTrimeshShape();
+	}
+	public void UpdateChunkMesh()
+	{
+		surfaceTool.Begin(Mesh.PrimitiveType.Triangles);
+		// GD.Print("int UpdateChunkMesh");
+		foreach(var position in triangles.Keys)
+		{
+			int x = Mathf.FloorToInt(position.X);
+			int y = Mathf.FloorToInt(position.Y);
+			int z = Mathf.FloorToInt(position.Z);
+			Octree root = voxels[x, y, z].octree;
+			// if(position.X == 3 && position.Y == 3 && position.Z == 1)
+			if(root.children != null)
+			{
+				GD.Print("in here");
+				triangles[position].Clear();
+				root.TraverseOctree(surfaceTool);
+			}
+			else
+			{
+				foreach(var triangle in triangles[position])
+				{
+					surfaceTool.AddTriangleFan(triangle);
+				}
+			}
+						
+		}
+
+		surfaceTool.SetMaterial(new StandardMaterial3D()
+		{
+			VertexColorUseAsAlbedo = true, 
+			AlbedoColor = Colors.DarkGreen,
+			CullMode = BaseMaterial3D.CullModeEnum.Disabled 
+		});
+
+		var arrayMesh = surfaceTool.Commit();
+		meshInstance3D.Mesh = arrayMesh;
+		collisionShape3D.Shape = arrayMesh.CreateTrimeshShape();
+	}
+	
 
 	private void AddFaceWithSurfaceTool(int x, int y, int z, int[] face)
 	{
-		// GD.Print("in here");
-		// Vector3[] faceVertices = GetFaceVertices(x, y, z, faceIndex);
-		Vector2[] faceUVs = GetFaceUVs();
-
 		var blockPosition = new Vector3I(x, y, z);
 		var a = _vertices[face[0]] + blockPosition;
 		var b = _vertices[face[1]] + blockPosition;
@@ -188,133 +240,13 @@ public partial class Chunk : StaticBody3D
 		var triangle1 = new Vector3[] { a, b, c };
 		var triangle2 = new Vector3[] { a, c, d };
 
-		
-		// Vector3 normal = ((faceVertices[1] - faceVertices[0]).Cross(faceVertices[2] - faceVertices[0])).Normalized();
-
-		// var normals = new Vector3[] { normal, normal, normal };
 
 		surfaceTool.AddTriangleFan(triangle1);
 		surfaceTool.AddTriangleFan(triangle2);
+		triangles[blockPosition].Add(triangle1);
+		triangles[blockPosition].Add(triangle2);
 
 	}
-
-	private Vector3[] GetFaceVertices(int x, int y, int z, int faceIndex)
-	{
-		// Define the vertices for each face relative to the voxel
-		switch (faceIndex)
-		{
-			case 0: // Top face
-				return new Vector3[]
-				{
-					new Vector3(x, y + 1, z),
-					new Vector3(x, y + 1, z + 1),
-					new Vector3(x + 1, y + 1, z + 1),
-					new Vector3(x + 1, y + 1, z)
-				};
-			case 1: // Bottom face
-				return new Vector3[]
-				{
-					new Vector3(x, y, z),
-					new Vector3(x + 1, y, z),
-					new Vector3(x + 1, y, z + 1),
-					new Vector3(x, y, z + 1)
-				};
-			case 2: // Left face
-				return new Vector3[]
-				{
-					new Vector3(x, y, z),
-					new Vector3(x, y + 1, z),
-					new Vector3(x, y + 1, z + 1),
-					new Vector3(x, y, z + 1)
-				};
-			case 3: // Right face
-				return new Vector3[]
-				{
-					new Vector3(x + 1, y, z + 1),
-					new Vector3(x + 1, y + 1, z + 1),
-					new Vector3(x + 1, y + 1, z),
-					new Vector3(x + 1, y, z)
-				};
-			case 4: // Front face
-				return new Vector3[]
-				{
-					new Vector3(x, y, z + 1),
-					new Vector3(x + 1, y, z + 1),
-					new Vector3(x + 1, y + 1, z + 1),
-					new Vector3(x, y + 1, z + 1)
-				};
-			case 5: // Back face
-				return new Vector3[]
-				{
-					new Vector3(x + 1, y, z),
-					new Vector3(x, y, z),
-					new Vector3(x, y + 1, z),
-					new Vector3(x + 1, y + 1, z)
-				};
-			default:
-				return new Vector3[0];
-		}
-	}
-
-	private Vector2[] GetFaceUVs()
-	{
-		// Define UVs for a face
-		return new Vector2[]
-		{
-			new Vector2(0, 0),
-			new Vector2(1, 0),
-			new Vector2(1, 1),
-			new Vector2(0, 1)
-		};
-	}
-
-	// private void ProcessVoxel(int x, int y, int z)
-	// {
-	// 	if (voxels == null || x < 0 || x >= voxels.GetLength(0) ||
-	// 		y < 0 || y >= voxels.GetLength(1) || z < 0 || z >= voxels.GetLength(2))
-	// 	{
-	// 		return;
-	// 	}
-
-	// 	Voxel voxel = voxels[x, y, z];
-	// 	if (voxel.type == Voxel.VoxelType.Air)
-	// 	{
-
-	// 		// GD.Print("DID NOT GO THROW VISIBLE CHECK");
-	// 		return;
-	// 	}
-	// 	else
-	// 	{
-	// 		if (voxel.isActive)
-	// 		{
-	// 			// Check and merge faces for optimization
-	// 		for (int face = 0; face < 6; face++)
-	// 		{
-	// 			if (IsFaceVisible(x, y, z, face))
-	// 			{
-	// 				AddFaceData(x, y, z, face); // Add merged face data
-	// 			}
-	// 		}
-	// 		}
-	// 	}
-	// }
-	
-	// private Voxel.VoxelType DetermineVoxelType(float x, float y, float z)
-	// {
-	// 	// float frequency = 0.2f;
-	// 	// float amplitude = 5f;
-
-	// 	// float xyOffset = MathF.Sin((x + z) * frequency) * amplitude;
-	// 	// float yzffset = MathF.Sin((z + y) * frequency) * amplitude;
-
-	// 	// float surfaceY = 10 + xyOffset + yzffset;
-	// 	// GD.Print("Y: ", y, " surfaceY: ", surfaceY);
-
-		
-	// 	return y < height ? Voxel.VoxelType.Stone : Voxel.VoxelType.Air;
-
-
-	// }
 	private Voxel.VoxelType DetermineVoxelType(float x, float y, float z)
 	{
 		float noiseValue = GlobalNoise.GetNoisePoint((int)x, (int)z); 
@@ -336,7 +268,6 @@ public partial class Chunk : StaticBody3D
 	}
 	private bool IsFaceVisible(int x, int y, int z, int face)
 	{
-		// Calculate the neighbor voxel's position within the current chunk
 		int nx = x, ny = y, nz = z;
 		// if (x < 0 || x >= chunkSize || y < 0 || y >= chunkSize || z < 0 || z >= chunkSize)
 		// 	return true;
@@ -427,159 +358,7 @@ public partial class Chunk : StaticBody3D
 		return false;
 	}
 
-
-	private void AddFaceData(int x, int y, int z, int faceIndex)
-	{
-		// Based on faceIndex, determine vertices and triangles
-		// Add vertices and triangles for the visible face
-		// Calculate and add corresponding UVs
-
-		if (faceIndex == 0) // Top Face
-		{
-			vertices.Add(new Vector3(x,     y + 1, z    ));
-			vertices.Add(new Vector3(x,     y + 1, z + 1)); 
-			vertices.Add(new Vector3(x + 1, y + 1, z + 1));
-			vertices.Add(new Vector3(x + 1, y + 1, z    )); 
-			uvs.Add(new Vector2(0, 0));
-			uvs.Add(new Vector2(1, 0));
-			uvs.Add(new Vector2(1, 1));
-			uvs.Add(new Vector2(0, 1));
-		}
-
-		if (faceIndex == 1) // Bottom Face
-		{
-			vertices.Add(new Vector3(x,     y, z    ));
-			vertices.Add(new Vector3(x + 1, y, z    )); 
-			vertices.Add(new Vector3(x + 1, y, z + 1));
-			vertices.Add(new Vector3(x,     y, z + 1)); 
-			uvs.Add(new Vector2(0, 0));
-			uvs.Add(new Vector2(0, 1));
-			uvs.Add(new Vector2(1, 1));
-			uvs.Add(new Vector2(1, 0));
-		}
-
-		if (faceIndex == 2) // Left Face
-		{
-			vertices.Add(new Vector3(x, y,     z    ));
-			vertices.Add(new Vector3(x, y,     z + 1));
-			vertices.Add(new Vector3(x, y + 1, z + 1));
-			vertices.Add(new Vector3(x, y + 1, z    ));
-			uvs.Add(new Vector2(0, 0));
-			uvs.Add(new Vector2(0, 0));
-			uvs.Add(new Vector2(0, 1));
-			uvs.Add(new Vector2(0, 1));
-		}
-
-		if (faceIndex == 3) // Right Face
-		{
-			vertices.Add(new Vector3(x + 1, y,     z + 1));
-			vertices.Add(new Vector3(x + 1, y,     z    ));
-			vertices.Add(new Vector3(x + 1, y + 1, z    ));
-			vertices.Add(new Vector3(x + 1, y + 1, z + 1));
-			uvs.Add(new Vector2(1, 0));
-			uvs.Add(new Vector2(1, 1));
-			uvs.Add(new Vector2(1, 1));
-			uvs.Add(new Vector2(1, 0));
-		}
-
-		if (faceIndex == 4) // Front Face
-		{
-			vertices.Add(new Vector3(x,     y,     z + 1));
-			vertices.Add(new Vector3(x + 1, y,     z + 1));
-			vertices.Add(new Vector3(x + 1, y + 1, z + 1));
-			vertices.Add(new Vector3(x,     y + 1, z + 1));
-			uvs.Add(new Vector2(0, 1));
-			uvs.Add(new Vector2(0, 1));
-			uvs.Add(new Vector2(1, 1));
-			uvs.Add(new Vector2(1, 1));
-		}
-
-		if (faceIndex == 5) // Back Face
-		{
-			vertices.Add(new Vector3(x + 1, y,     z    ));
-			vertices.Add(new Vector3(x,     y,     z    ));
-			vertices.Add(new Vector3(x,     y + 1, z    ));
-			vertices.Add(new Vector3(x + 1, y + 1, z    ));
-			uvs.Add(new Vector2(0, 0));
-			uvs.Add(new Vector2(1, 0));
-			uvs.Add(new Vector2(1, 0));
-			uvs.Add(new Vector2(0, 0));
-			
-		}
-		AddTriangleIndices();
-	}
-	private void AddTriangleIndices()
-	{
-		int vertCount = vertices.Count;
-
-		// First triangle
-		triangles.Add(vertCount - 4);
-		triangles.Add(vertCount - 3);
-		triangles.Add(vertCount - 2);
-
-		// Second triangle
-		triangles.Add(vertCount - 4);
-		triangles.Add(vertCount - 2);
-		triangles.Add(vertCount - 1);
-	}
-
-	// public void GenerateMesh()
-	// {
-	// 	IterateVoxels();
-	// 	if (vertices.Count == 0 || triangles.Count == 0)
-	// 	{
-	// 		return; // Skip creating a mesh for this chunk
-	// 	}
-	// 	var colors = new List<Color>();
-	// 	foreach (var vertex in vertices)
-	// 	{
-	// 		if (vertex.Y >= World.Instance.topPoint - 2)
-	// 		{
-	// 			// Snow (highest elevation)
-	// 			colors.Add(new Color(1.0f, 1.0f, 1.0f)); // White
-	// 		}
-	// 		else if (vertex.Y < chunkSize && vertex.Y >= chunkSize / 2)
-	// 		{
-	// 			// Grass (medium-high elevation)
-	// 			colors.Add(new Color(0.0f, 1.0f, 0.0f)); // Green
-	// 		}
-	// 		else if (vertex.Y < chunkSize / 2 && vertex.Y >= chunkSize / 4)
-	// 		{
-	// 			// Dirt (medium-low elevation)
-	// 			colors.Add(new Color(0.54f, 0.27f, 0.07f)); // Brown
-	// 		}
-	// 		else
-	// 		{
-	// 			// Stone (lowest elevation)
-	// 			colors.Add(new Color(0.5f, 0.5f, 0.5f)); // Gray
-	// 		}
-
-	// 	}
-
-	// 	var arrayMesh = new ArrayMesh();
-	// 	var array = new Godot.Collections.Array();
-
-	// 	array.Resize((int)Mesh.ArrayType.Max);
-
-	// 	array[(int)Mesh.ArrayType.Vertex] = vertices.ToArray();
-	// 	array[(int)Mesh.ArrayType.Index] = triangles.ToArray();
-	// 	array[(int)Mesh.ArrayType.Color] = colors.ToArray();
-
-
-	// 	arrayMesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, array);
-	// 	// Texture2D texture = ResourceLoader.Load<Texture2D>("res://stone.png");
-
-	// 	var material = new StandardMaterial3D()
-	// 	{
-	// 		VertexColorUseAsAlbedo = true, // Use vertex colors as the texture
-	// 		CullMode = BaseMaterial3D.CullModeEnum.Disabled // Disable face culling (double-sided rendering)
-	// 	};
-		
-	// 	arrayMesh.SurfaceSetMaterial(0, material);
-	// 	collisionShape3D.Shape = arrayMesh.CreateTrimeshShape();
-	// 	meshInstance3D.Mesh = arrayMesh;
-	// }
-	public void BreakBlock(Vector3 localPosition)
+	public void SetBlock(Vector3 localPosition, OperationType type, Vector3 collisonNormal)
 	{
 			// Convert the local position to voxel indices
 		int x = Mathf.FloorToInt(localPosition.X);
@@ -589,19 +368,35 @@ public partial class Chunk : StaticBody3D
 		// Ensure the indices are within bounds
 		if (x >= 0 && x < chunkSize && y >= 0 && y < chunkSize && z >= 0 && z < chunkSize)
 		{
-			// Mark the target block as Air
-			voxels[x, y, z].type = Voxel.VoxelType.Air;
-			voxels[x, y, z].isActive = false;
 
-			// here we check the boundries, if the block we want to delete is at the boundry of the block
+			Vector3I blockPosition = new Vector3I(x, y, z);
+
+			if(OperationType.Break == type) 
+			{
+				voxels[x, y, z].type = Voxel.VoxelType.Air;
+				voxels[x, y, z].isActive = false;
+				triangles[blockPosition].Clear();
+			}
+			else 
+			{
+				voxels[x, y, z].type = Voxel.VoxelType.Stone;
+				voxels[x, y, z].isActive = true;
+				ProcessVoxel(x, y, z);
+			}
+
+			ProccessNeighbourTriangles(blockPosition);
+
+			// here we check the boundries,
+			// if the block we want to delete is at the boundry of the block
 			// we must generate the neighbouring chunks
+			
 			if(x == chunkSize -1)
 			{
 				Vector3 globalPos = GlobalPosition + new Vector3(x + 1, y, z);
 				var neighborChunk = World.Instance.GetChunkAt(globalPos);
 				if(neighborChunk != null)
 				{
-					neighborChunk.GenerateMesh();
+					neighborChunk.UpdateChunkMesh();
 				}
 			}
 
@@ -612,7 +407,7 @@ public partial class Chunk : StaticBody3D
 
 				if(neighborChunk != null)
 				{
-					neighborChunk.GenerateMesh();
+					neighborChunk.UpdateChunkMesh();
 				}
 			}
 			if(y == chunkSize - 1)
@@ -622,7 +417,7 @@ public partial class Chunk : StaticBody3D
 
 				if(neighborChunk != null)
 				{
-					neighborChunk.GenerateMesh();
+					neighborChunk.UpdateChunkMesh();
 				}
 			}
 			if(x == 0)
@@ -631,7 +426,7 @@ public partial class Chunk : StaticBody3D
 				var neighborChunk = World.Instance.GetChunkAt(globalPos);
 				if(neighborChunk != null)
 				{
-					neighborChunk.GenerateMesh();
+					neighborChunk.UpdateChunkMesh();
 				}
 			}
 
@@ -642,7 +437,7 @@ public partial class Chunk : StaticBody3D
 
 				if(neighborChunk != null)
 				{
-					neighborChunk.GenerateMesh();
+					neighborChunk.UpdateChunkMesh();
 				}
 			}
 			if(y == 0)
@@ -652,38 +447,101 @@ public partial class Chunk : StaticBody3D
 
 				if(neighborChunk != null)
 				{
-					neighborChunk.GenerateMesh();
+					neighborChunk.UpdateChunkMesh();
 				}
 			}
 			
 
-			GenerateMesh();
+			UpdateChunkMesh();
 		}
 		else
 		{
 			GD.PrintErr("Voxel position is out of bounds for this chunk!");
+
+			// will give us the neighbouring chunk
+			Vector3 blockGlobalPosition = GlobalPosition + localPosition + collisonNormal;
+
+			var chunk = World.Instance.GetChunkAt(blockGlobalPosition);
+			if(chunk == null)
+			{
+				GD.PrintErr("you cant build here");
+			}
+			else
+			{
+				Vector3 localP = blockGlobalPosition - chunk.GlobalPosition - collisonNormal;
+				x = Mathf.FloorToInt(localP.X);
+				y = Mathf.FloorToInt(localP.Y);
+				z = Mathf.FloorToInt(localP.Z);
+				if(OperationType.Break == type) 
+				{
+					chunk.voxels[x, y, z].type = Voxel.VoxelType.Air;
+					chunk.voxels[x, y, z].isActive = false;
+					chunk.triangles[localP].Clear();
+				}
+				else 
+				{
+					chunk.voxels[x, y, z].type = Voxel.VoxelType.Stone;
+					chunk.voxels[x, y, z].isActive = true;
+					chunk.ProcessVoxel(x, y, z);
+				}
+				chunk.ProccessNeighbourTriangles((Vector3I)localP);
+				chunk.UpdateChunkMesh();
+				}
+
 		}
 	}
-	private void UpdateChunkMesh()
+	public void BreakVoxels(Vector3 breakPosition, Vector3 blockPosition)
 	{
+		int x = Mathf.FloorToInt(blockPosition.X);
+		int y = Mathf.FloorToInt(blockPosition.Y);
+		int z = Mathf.FloorToInt(blockPosition.Z);
 
-	}
-	
-	public void BuildBlock(Vector3 localPosition)
-	{
-		int x = Mathf.FloorToInt(localPosition.X);
-		int y = Mathf.FloorToInt(localPosition.Y);
-		int z = Mathf.FloorToInt(localPosition.Z);
-
-		if (x >= 0 && x < chunkSize && y >= 0 && y < chunkSize && z >= 0 && z < chunkSize)
+		Octree octree = voxels[x, y , z].octree;
+		Octree leaf = octree.LocateLeaf(breakPosition);
+		if (leaf != null)
 		{
-			GD.Print(voxels[x, y, z].type);
-			voxels[x, y, z].type = Voxel.VoxelType.Stone;
-			voxels[x, y, z].isActive = true;
-			GenerateMesh();
+			// GD.Print("(x,y,z):" , x,", ", y, " ", z);
+
+			if(leaf.alreadyDestroyed == false)
+			{
+				leaf.AddNodes(breakPosition);
+				leaf.dominantType = Voxel.VoxelType.Air;
+				UpdateChunkMesh();
+			}
 		}
+	}
+	void ProccessNeighbourTriangles(Vector3I blockPosition)
+	{
+		// here we need to check 5 neighbours
+
+		// bottom
+		// left
+		// righ
+		// forward
+		// backword
+
+		int x = blockPosition.X;
+		int y = blockPosition.Y;
+		int z = blockPosition.Z;
+
+		ProcessVoxel(x, y-1, z);
+		ProcessVoxel(x-1, y, z);
+		ProcessVoxel(x+1, y, z);
+		ProcessVoxel(x, y, z-1);
+		ProcessVoxel(x, y, z+1);
 
 
+	}
+	public void ResetChunk() 
+	{
+		// Clear voxel data
+		voxels = new Voxel[chunkSize, chunkSize, chunkSize];
+	
+
+		vertices.Clear();
+		triangles.Clear();
+		uvs.Clear();
+		
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

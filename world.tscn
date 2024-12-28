@@ -35,14 +35,15 @@ script = ExtResource("1_x1jdf")
 chunkScene = ExtResource("2_g2u02")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.764604, -0.558154, 0.322249, 0.415241, -0.0442318, 0.908635, -0.492905, 0.828557, 0.265588, 10.9235, 27.4781, 18.3075)
+transform = Transform3D(-0.968583, -0.174309, -0.177378, 0, -0.71325, 0.700909, -0.24869, 0.678889, 0.690842, 0, 11.8095, 0)
 shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_y810q")
 
 [node name="Player" parent="." instance=ExtResource("3_87a5l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.27906, 13.0303, -0.106104)
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0.629508, -0.29874, 2.36527)
+slide_on_ceiling = false
 
 [node name="water" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.59108, 0)
