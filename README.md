@@ -135,9 +135,10 @@ Here is the result:
 | Pose No.    | Normal | WireFrame  | OverDraw |
 | ----------- | ---------- | ---------- | ----------------- |
 | 1           | ![](/OctreeImages/normal.png) | ![](/OctreeImages/wirefram.png) | ![](OctreeImages/overdraw.png) |
-You can zoom in the images
 
-But as we can see we rendered also redundant faces, so to remove those. I focused on how they are constructed. for each node the common faces between each child are rendered so we must remove those, in order to do that we will use a pointer to the parent node in order to check for a child the it's visible faces in comparison for the his brothers.
+- You can zoom in the images
+
+- But as we can see we rendered also redundant faces, so to remove those. I focused on how they are constructed. for each node the common faces between each child are rendered so we must remove those, in order to do that we will use a pointer to the parent node in order to check for a child the it's visible faces in comparison for the his brothers.
 This is one stage of optimization for rendered faces, means for each level there will be no redundent faces, but between each level there will be, In the future i will work in this.
 
 Here are the result of optimization:
@@ -145,6 +146,13 @@ Here are the result of optimization:
 | ----------- | ---------- | ---------- | ----------------- |
 | 1           | ![](/OctreeImages/normal_opt.png) | ![](/OctreeImages/wireFrame_opt.png) | ![](OctreeImages/overDraw_opt.png) |
 
+- In order to reallt see the difference we can look at the Over Draw view only:
+- Before:
+	- ![](OctreeImages/overdraw.png)
+- After:
+  	-![](OctreeImages/overDraw_opt.png)
+
+- Now is more easier to notice the changes
 
 
 
