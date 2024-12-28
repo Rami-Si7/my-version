@@ -154,6 +154,8 @@ Here are the result of optimization:
 
 - Now is more easier to notice the changes
 
+- You can also check this video for dynamic breaking in game, which you can allso visualise the octree being built click [here](https://drive.google.com/file/d/1_vW90q9lFrjVFm12ngtbRBT7FLGrG_sq/view?usp=sharing)
+
 
 
      
