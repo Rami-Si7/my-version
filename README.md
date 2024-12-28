@@ -1,4 +1,4 @@
-# Road to Glory (Greedy Mesh Generation) BLOG:
+# Terrain Generation and OCTREE Blog:
 ## Dates:
 - [20/11/2024](#20112024)
 - [21/11/2024](#21112024)
@@ -10,6 +10,10 @@
 - [4/12/2024](#4122024)
 - [5/12/2024](#5122024)
 - [6/12/2024](#6122024)
+- [18/12/2024](#18122024)
+- [25/12/2024](#25122024)
+- [26/12/2024](#26122024)
+- [27/12/2024](#27122024)
 
 ## 20/11/2024:
 - after our first meeting when you asked from me to read Building a High-Performance Voxel Engine in Unity artical and try to implement it.
@@ -91,4 +95,22 @@ the following two days were insane.
 - 7 hours
 
 - you can watch the video of breaking and placing by clicking [here](https://drive.google.com/file/d/1bIEB5QkIn7pQFPi5FgadgXiUNOmq3hPy/view?usp=sharing)
+
+
+## 18/12/2024:
+- I have optimzed the loading and unloading terrain based on the player position, from generating at each frame the terrain i chose a time interval based on it the engine will render and unrender the mesh, the data structure that helped me to acheive that is a Queue, one for loading chunks and one for unloading chunks. At each time interval the engine will render the mesh.
+- I have tried to use threads in order to make it much faster but i didn't work for me well, maybe later on i will try again to make it work.
+- 10 hours
+
+## In the following dates, I worked on Octrees
+- First I studied how an octree works.
+- I designed a few algorithms that do the following tasks:
+  - Searching for the node that need to be divided.
+  - creation of octree nodes while breaking voxel.
+  - Add mesh without redundant faces at each level of the octree nodes
+  - Update mesh for the whole octree.
+
+
+## 25/12/2024:
+- 
   
