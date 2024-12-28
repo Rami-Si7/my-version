@@ -132,5 +132,6 @@ the following two days were insane.
 ## 26/12/2024:
 -Now we are going to test the if what we designed works or not, in order to that we we build mesh for each voxel. For now lets render all the faces of the mesh and to see if the breaking of voxel really works and each voxel divide into smaller voxels at each break.
 Here is the result:
+![Result 1](results/stone_result.png)
      
   
