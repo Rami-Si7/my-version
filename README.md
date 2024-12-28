@@ -131,6 +131,7 @@ the following two days were insane.
 
 ## 26/12/2024:
 -Now we are going to test the if what we designed works or not, in order to that we we build mesh for each voxel. For now lets render all the faces of the mesh and to see if the breaking of voxel really works and each voxel divide into smaller voxels at each break.
+
 Here is the result:
 | Pose No.    | Normal | WireFrame  | OverDraw |
 | ----------- | ---------- | ---------- | ----------------- |
@@ -139,7 +140,7 @@ Here is the result:
 - You can zoom in the images
 
 - But as we can see we rendered also redundant faces, so to remove those. I focused on how they are constructed. for each node the common faces between each child are rendered so we must remove those, in order to do that we will use a pointer to the parent node in order to check for a child the it's visible faces in comparison for the his brothers.
-This is one stage of optimization for rendered faces, means for each level there will be no redundent faces, but between each level there will be, In the future i will work in this.
+This is one stage of optimization for rendered faces, means for each level there will be no redundent faces, but between each level there will be, In the future i will work in this. You can expolre more of my approach by dive into the code.
 
 Here are the result of optimization:
 | Pose No.    | Normal | WireFrame  | OverDraw |
