@@ -156,6 +156,11 @@ Here are the result of optimization:
 - Now is more easier to notice the changes
 
 - You can also check this video for dynamic breaking in game, which you can allso visualise the octree being built click [here](https://drive.google.com/file/d/1_vW90q9lFrjVFm12ngtbRBT7FLGrG_sq/view?usp=sharing)
+- struggles that i faced during designing this feature:
+  - at each level when rendering the faces we must check if the other brothers of that level and we must render the face only if a along every axis the absoulte value of the difference between this current brother position and a another brother position is zero. And to get the exact face position we add an offset value of(0.5 ^ (this.level)) with trying each 6 directions, top, bottom, left, right, forward, back. But, eventuality I made it :).
+  - sometimes when the raycast is on a surface and the normlaiztion direction is along the y axis meaning we are trying to break a block while looking up instead of breaking the upper voxel it break the voxel under this happen beacuase the position of the ray cast at the y axis sometime is not accurate like 0.49997, and according to the checks i make in my code this value will not pass the condition and hence locate the wrong child which contains this collison point. I Hope to find a solution for this in the feautre.
+
+- 18 hours
 
 
 
