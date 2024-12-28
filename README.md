@@ -110,7 +110,25 @@ the following two days were insane.
   - Add mesh without redundant faces at each level of the octree nodes
   - Update mesh for the whole octree.
 
-
 ## 25/12/2024:
-- 
+- After the meeting with Roi, I understood what was the requirement of the new task, which is when we use the Axe 🪓 to break block it must be divided each time we break to a more little voxels.
+  The Data structure that can help me to implement such feature is an Octree. each node in an octree has 8 nodes. So when we break a voxel of size (1,1,1) it will be dived to 8 different voxels each one of them of size (0.5,0.5,0.5) and each time we break a voxel of size (0.5,0.5,0.5) we get 8 voxels of size (0.25,0.25,0.25) and so on.
+- The next step is to to know what info is important to implmeent the octree data structure, each node must have:
+  - 8 children
+  - level (it will help us calculate the children position)
+  - type (Air or not)
+  - we will talk about more fields later on.
+- For the Voxel object we added an  octree object as a field. So when we create each chunk voxels will be created, and then octree roots will be created.
+- by using the collsion point of the player's axe we know exactly which voxel he hit, we need to work on this voxel:
+  - we will locate the leaf that contains the collison point position.
+  - we will use the method that creates children node for the root:
+    - it create 8 children, their position will be calculated based on their parent position and the level they are at. For example, the root node is at position (0,0,0) and at level 0. it's children we be at (0,0,0) , (0.5, 0, 0), (0.5, 0.5, 0), (0, 0.5, 0), (0,0,0.5) , (0.5, 0, 0.5), (0.5, 0.5, 0.5), (0, 0.5, 0.5). WHY 0.5? it is basically 0.5 to the power of level so 0.5^1 they are at level 1.
+    - then to know which voxel child the player broke we are going to use the collsion point to find which child contain this psoition. then we set it to Air and the rest to Stone.
+This steps above describes all the work needed to creat an octree obejct on the following dates we will talk about mesh generation.
+I found this approach the easiest one and it's dynamic according to the player decisions in game.
+
+- 8 hours
+
+## 26/12/2024:
+     
   
